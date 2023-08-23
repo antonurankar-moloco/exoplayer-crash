@@ -1,17 +1,16 @@
 package com.moloco.sdk.exoplayer
 
 import android.content.Context
-import android.net.http.SslCertificate.saveState
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 
 class MainActivity : AppCompatActivity() {
     private val context: Context get() = this
-    private lateinit var playerView: StyledPlayerView
+    private var playerView: StyledPlayerView? = null
     private var exoPlayer: ExoPlayer? = null
 
 
@@ -19,10 +18,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        playerView = StyledPlayerView(context).apply {
-            // Disables default ExoPlayer UI.
-            useController = false
-        }
     }
 
     override fun onResume() {
@@ -36,7 +31,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initOrResumeExoPlayer() {
-        Log.i("==tomi==", "initOrResumeExoPlayer")
+        Log.i("==tomi==", "initOrResumeExoPlayer +++")
+
+        try {
+            if (playerView == null) {
+                playerView = StyledPlayerView(context).apply {
+                    // Disables default ExoPlayer UI.
+                    useController = false
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("==tomi==", "initOrResumeExoPlayer", e)
+            return
+        }
 
         if (exoPlayer == null) {
             // ExoPlayer can be called only from one thread.
@@ -54,17 +61,19 @@ class MainActivity : AppCompatActivity() {
                         playWhenReady = false
                     }
 
-            playerView.player = exoPlayer
+            playerView!!.player = exoPlayer
         }
 
         // Important for it to be at the end of exoPlayer creation.
-        playerView.onResume()
+        playerView!!.onResume()
+
+        Log.i("==tomi==", "initOrResumeExoPlayer ---")
     }
 
     private fun disposeExoPlayer() {
-        Log.i("==tomi==", "disposeExoPlayer")
+        Log.i("==tomi==", "disposeExoPlayer +++")
 
-        playerView.run {
+        playerView?.run {
             // Important for it to be at the start of exoPlayer disposal.
             onPause()
             player = null
@@ -74,5 +83,7 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         exoPlayer = null
+
+        Log.i("==tomi==", "disposeExoPlayer ---")
     }
 }
