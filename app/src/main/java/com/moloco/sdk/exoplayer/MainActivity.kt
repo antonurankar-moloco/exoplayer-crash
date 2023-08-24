@@ -4,12 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 
 class MainActivity : AppCompatActivity() {
     private val context: Context get() = this
+    private lateinit var textView: TextView
     private var playerView: StyledPlayerView? = null
     private var exoPlayer: ExoPlayer? = null
 
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        textView = findViewById(R.id.textView)
     }
 
     override fun onResume() {
@@ -40,8 +42,9 @@ class MainActivity : AppCompatActivity() {
                     useController = false
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: android.view.InflateException) {
             Log.e("==tomi==", "initOrResumeExoPlayer", e)
+            textView.text = e.message
             return
         }
 
